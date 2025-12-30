@@ -1,7 +1,6 @@
 
 // App.js
 
-import {  BrowserRouter } from "react-router-dom";
 // BrowserRouter → 配下のコンポーネントに「ルーティングの文脈(context)」を提供すること
 //                 👉 Routers、Route、Link、useNavigateなどはすべて必ずこのなかで使う
 import { Routes, Route } from "react-router-dom";
