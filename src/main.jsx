@@ -8,14 +8,17 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./style.css";
 import App from './App.jsx'
+import { SessionProvider, SessionContext } from './sessionProvider.jsx';
 
 // supabaseのパスワード
 // xEQ9BoAFNOksFoUW
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <SessionProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </SessionProvider>
   </StrictMode>,
 )

@@ -1,14 +1,19 @@
 
 // Signup → 登録
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { Navigate } from "react-router-dom";
+
 import { authRepositories } from "../repositories/auth";
+import { SessionContext } from "../sessionProvider";
 
 
 function Signup(){
   const [ name, setName ] = useState("");
   const [ email, setEmail ] = useState("");
   const [ password, setPassword ] = useState("");
+
+  const {  currentUser, setCurrentUser } = useContext(SessionContext)
 
   const onChangeSetName = (e) => {
     // console.log(e.target.value)
@@ -27,8 +32,13 @@ function Signup(){
   const signup = async () => {
     const user = await authRepositories.signup(name, email, password);
     // console.log(user); // {id: '2b454a90-92cb-406a-b3ec-9300dcbd6a95', aud: 'authenticated', role: 'authenticated', email: 'obito0531@gmail.com', email_confirmed_at: '2025-12-30T13:51:17.940128152Z', …}
-
+    
+    setCurrentUser(user);
   }
+
+  // console.log(currentUser)
+  // ✅ 登録したらHome画面に戻る
+  if(currentUser != "") return <Navigate replace to="/" />
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
