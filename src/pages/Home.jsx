@@ -1,17 +1,38 @@
 
-// Home.js
+// ⭐️ ここからここから
+// ⭐️ ここからここから
+// ⭐️ ここからここから
 
-import { useContext } from "react";
+
+// Home.js
+// TODO 
+// フォームでクリックできるようにする
+
+import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import { SessionContext } from "../sessionProvider";
 import { authRepositories } from "../repositories/auth";
+import { postRepository } from "../repositories/post";
 import { SideMenu } from "../components/SideMenu";
 
 
 function Home(){
   const { currentUser } = useContext(SessionContext);
   // console.log(currentUser);
+  const [ content, setContent ] = useState("");
+
+  const onChangeSetContent = (e) => {
+    setContent(e.target.value);
+  }
+
+  const onClickCreatePost = async () => {
+    const post = await postRepository.create(content, currentUser.id);
+    // console.log(post);
+    // {id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
+  }
+
+
 
   // ログイン/登録していないなら、ログインページにリダイレクト
   // if(currentUser === null) return <Navigate replace to="/signin" />
@@ -33,8 +54,14 @@ function Home(){
               <textarea
                 className="w-full p-2 mb-4 border-2 border-gray-200 rounded-md"
                 placeholder="What's on your mind?"
+                onChange={ onChangeSetContent }
+                value={ content }
               />
-              <button className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button 
+                className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={ onClickCreatePost }
+                disabled={ content === "" }
+              >
                 Post
               </button>
             </div>

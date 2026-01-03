@@ -15,7 +15,7 @@
 export const Post = (props) => {
   return (
     <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
-      <h3 className="test-lg font-semibold">wataru</h3>
+      <h3 className="text-lg font-semibold">wataru</h3>
       <p className="text-gray-700">Reactくるしば</p>
       <button className="text-blue-500 hover:underline cursor-pointer focus:outline-none">
         削除
