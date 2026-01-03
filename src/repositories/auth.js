@@ -44,7 +44,7 @@ export const authRepositories = {
 
   // ✅ 現在ログイン中のユーザーのセッション情報を取得
   async getCurrentUser(){
-    const {  data, error } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
     if(error != null) throw new Error(error.message);
     if(data.session == null) return;
     // console.log(data);

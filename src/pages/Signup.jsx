@@ -38,7 +38,8 @@ function Signup(){
 
   // console.log(currentUser)
   // ✅ 登録したらHome画面に戻る
-  if(currentUser != "") return <Navigate replace to="/" />
+  // if(currentUser != "") return <Navigate replace to="/" />
+  if(currentUser) return <Navigate replace to="/" />
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">

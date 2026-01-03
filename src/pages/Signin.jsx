@@ -1,5 +1,6 @@
 
 // Signin → ログインページ
+// todo → formに変更。エンターで押せるように
 
 import { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
@@ -32,7 +33,8 @@ function Signin(){
   // console.log(currentUser)
   // Home画面に遷移
   // replace = true → 履歴を置き換える。戻るボタンで戻れないようにする
-  if(currentUser != null) return <Navigate replace to="/" /> // Home画面に遷移
+  // if(currentUser != null) return <Navigate replace to="/" /> // Home画面に遷移
+  if(currentUser) return <Navigate replace to="/" />
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
