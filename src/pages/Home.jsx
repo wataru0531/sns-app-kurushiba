@@ -1,10 +1,6 @@
 
-// ⭐️ ここからここから
-// ⭐️ ここからここから
-// ⭐️ ここからここから
-
-
 // Home.js
+
 // TODO 
 // フォームでクリックできるようにする
 
@@ -22,6 +18,10 @@ function Home(){
   // console.log(currentUser);
   const [ content, setContent ] = useState("");
 
+  // ログイン/登録していないなら、ログインページにリダイレクト
+  // if(currentUser === null) return <Navigate replace to="/signin" />
+  if(!currentUser) return <Navigate replace to="signin" />
+
   const onChangeSetContent = (e) => {
     setContent(e.target.value);
   }
@@ -31,12 +31,6 @@ function Home(){
     // console.log(post);
     // {id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
   }
-
-
-
-  // ログイン/登録していないなら、ログインページにリダイレクト
-  // if(currentUser === null) return <Navigate replace to="/signin" />
-  if(!currentUser) return <Navigate replace to="signin" />
 
   return (
     <div className="min-h-screen bg-gray-100">
