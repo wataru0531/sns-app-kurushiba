@@ -4,19 +4,21 @@
 // TODO 
 // フォームでクリックできるようにする
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
 import { SessionContext } from "../sessionProvider";
-import { authRepositories } from "../repositories/auth";
+// import { authRepositories } from "../repositories/auth";
 import { postRepository } from "../repositories/post";
 import { SideMenu } from "../components/SideMenu";
+import { Post } from "../components/Post";
 
 
 function Home(){
   const { currentUser } = useContext(SessionContext);
   // console.log(currentUser);
   const [ content, setContent ] = useState("");
+  const [ posts, setPosts ] = useState([]);
 
   // ログイン/登録していないなら、ログインページにリダイレクト
   // if(currentUser === null) return <Navigate replace to="/signin" />
@@ -29,8 +31,31 @@ function Home(){
   const onClickCreatePost = async () => {
     const post = await postRepository.create(content, currentUser.id);
     // console.log(post);
-    // {id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
+    // { id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
+
+    // ⭐️ リアルアイムに更新
+    setPosts([
+      { ...post, 
+        userId: currentUser.id, // 👉 このpostはuserId、userNameを持っていないのでオブジェクトに追加
+        userName: currentUser.name,
+      },
+      ...posts, // 👉 これまで表示していたpostsを追加して表示させる
+    ])
+    
+    setContent("");
   }
+
+  // ✅ 投稿を取得する処理
+  const fetchPosts = async () => {
+    const posts = await postRepository.find();
+    console.log(posts);
+    // (3) [{ id: 3, content: 'こんばんは', created_at: '2026-01-05T13:28:47.684718+00:00', user_metadata: {…}, user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9', …}, {…}, {…}]
+    setPosts(posts);
+  }
+
+  useEffect(() => {
+    fetchPosts();
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -60,7 +85,19 @@ function Home(){
               </button>
             </div>
 
-            <div className="mt-4"></div>
+            <div className="mt-4">
+              {
+                posts && posts.map((post) => {
+                  // console.log(post)
+                  return (
+                    <Post 
+                      key={ post.id } 
+                      post={ post }
+                    />
+                  )
+                }) 
+              }
+            </div>
           </div>
 
           {/* サイドメニュー */}

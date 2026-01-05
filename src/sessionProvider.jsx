@@ -31,9 +31,7 @@ const SessionProvider = (props) => {
       { props.children }
     </SessionContext.Provider>
   )
-
 }
-
 
 export { 
   SessionProvider, // mainコンポーネントで覆う
