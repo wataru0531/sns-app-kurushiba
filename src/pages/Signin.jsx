@@ -24,7 +24,9 @@ function Signin(){
     setPassword(event.target.value);
   }
 
-  const signin = async () => {
+  const onSubmitSignin = async (e) => {
+    e.preventDefault();
+
     const user = await authRepositories.signin(email, password);
     // console.log(user); 
     // { id: 'e15c2c6d-eabf-4b69-a147-0975b5f91374', aud: 'authenticated', role: 'authenticated', email: 'obito0531@gmail.com', email_confirmed_at: '2026-01-02T09:38:39.988757Z', …}
@@ -42,7 +44,11 @@ function Signin(){
       <div className="flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-gray-900">SNS APP</h2>
         <div className="mt-8 w-full max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+
+          <form 
+            className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"
+            onSubmit={ onSubmitSignin }
+          >
             <div className="mb-5">
               <label className="block tet-sm font-medium text-gray-700" htmlFor="email">
                 メールアドレス
@@ -83,8 +89,8 @@ function Signin(){
 
             <div>
               <button 
+                type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={ signin }
                 disabled={ email === "" || password=== ""}
               >
                 ログイン
@@ -93,8 +99,8 @@ function Signin(){
             <div className="mt-4 text-center text-sm">
               登録は<Link className="underline" to={"/signup"}>こちら</Link>から
             </div>
+          </form>
 
-          </div>
         </div>
       </div>
       

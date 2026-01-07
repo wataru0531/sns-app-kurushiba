@@ -27,10 +27,20 @@ export const postRepository = {
     return data[0];
   },
 
-  async find(){
+  async find(_page, _limit){
+    // isNaN() ... 数値に変換できない場合 → true
+    //             数値なら → false
+    // console.log(isNaN(_page)); // false
+    _page = isNaN(_page) || _page < 1 ? 1 : _page;
+    const start = _limit * (_page - 1);
+    const end = start + _limit -1;
+    // console.log(start, end); // 0, 4
+                             // 5, 9 
+
     const { data, error } = await supabase
       .from("posts_view")
       .select("*") // 全て
+      .range(start, end) // ⭐️ 指定した範囲のデータを取得できる
       .order("created_at", { ascending: false }); // 新しい順で取得
 
     if(error) throw new Error(error.message);
@@ -45,5 +55,17 @@ export const postRepository = {
         userName: post.user_metadata._name // ✅ _nameがあってか確認
       }
     })
+  },
+
+  async delete(_id) { // 削除するpostのid
+    const { error } = await supabase
+      .from("posts")
+      .delete()
+      .eq("id", _id); // 引数の_idと一致するpostを削除する
+
+    if(error) throw new Error(error.message);
+    
+    return true;
   }
+
 }

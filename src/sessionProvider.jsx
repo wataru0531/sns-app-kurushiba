@@ -2,6 +2,7 @@
 
 import { createContext, useEffect, useState } from "react";
 import { authRepositories } from "./repositories/auth";
+import { supabase } from "./lib/supabase";
 
 const SessionContext = createContext();
 
@@ -11,17 +12,33 @@ const SessionProvider = (props) => {
   const [ isLoading, setIsLoading ] = useState(true);
 
   // 👉 現在ログイン中のユーザーのセッションデータを取得してセット
-  const setSession = async () => {
-    const currentUser = await authRepositories.getCurrentUser();
-    // console.log(currentUser);
-
-    setCurrentUser(currentUser);
-
-    setIsLoading(false);
-  }
-
   useEffect(() => {
-    setSession();
+    // setSession();
+
+    // ✅ 再ログインの場合、またはメール確認OFFの時の処理
+    supabase.auth.getSession().then(({ data }) => {
+      // console.log(data);
+      // {session: {access_token: 'eyJhbGciOiJFUzI1NiIsImtpZCI6IjJhZmI1NWJkLWIzNGUtNG…EWo3VVO4DT0SBOXLEPs-iX9QIdZzrSkj7IWxh1KKqtq3hXGOQ', token_type: 'bearer', expires_in: 3600, expires_at: 1767782899, refresh_token: '55gtcdtsx4ux', …}
+
+      if(data.session?.user) {
+        setCurrentUser(authRepositories.normalizeUser(data.session.user))
+      }
+      setIsLoading(false);
+    });
+
+    // ⭐️ 認証状態の変化を監視 → メール確認ONの時の処理
+    // → 
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if(session?.user) {
+        setCurrentUser(authRepositories.normalizeUser(session.user));
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    }
   }, []);
 
   if(isLoading) return <div>...Loading</div>

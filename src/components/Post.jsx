@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { SessionContext } from "../sessionProvider";
 
 
-export const Post = ({ post: { userId, userName, content } }) => {
+export const Post = ({ post: { id, userId, userName, content }, onClickDeletePost }) => {
   // console.log(post)
   const { currentUser } = useContext(SessionContext);
 
@@ -14,7 +14,10 @@ export const Post = ({ post: { userId, userName, content } }) => {
       
       {/* 自分が投稿した内容にだけ削除ボタンを実装 */}
       { currentUser.id ===  userId && (
-        <button className="text-blue-500 hover:underline cursor-pointer focus:outline-none">
+        <button 
+          className="text-blue-500 hover:underline cursor-pointer focus:outline-none"
+          onClick={ () => onClickDeletePost(id) }
+        >
           削除
         </button>
       )}

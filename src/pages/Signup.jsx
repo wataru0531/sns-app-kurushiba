@@ -13,7 +13,7 @@ function Signup(){
   const [ email, setEmail ] = useState("");
   const [ password, setPassword ] = useState("");
 
-  const {  currentUser, setCurrentUser } = useContext(SessionContext)
+  const { currentUser } = useContext(SessionContext)
 
   const onChangeSetName = (e) => {
     // console.log(e.target.value)
@@ -28,12 +28,16 @@ function Signup(){
     setPassword(e.target.value);
   }
 
-  // ✅　ユーザー登録する処理
-  const signup = async () => {
-    const user = await authRepositories.signup(name, email, password);
-    // console.log(user); // {id: '2b454a90-92cb-406a-b3ec-9300dcbd6a95', aud: 'authenticated', role: 'authenticated', email: 'obito0531@gmail.com', email_confirmed_at: '2025-12-30T13:51:17.940128152Z', …}
+  // ✅ ユーザー登録する処理
+  const onSubmitSignup = async (e) => {
+    e.preventDefault();
     
-    setCurrentUser(user);
+    await authRepositories.signup(name, email, password);
+
+    alert(
+    "登録が完了しました。\n" +
+    "メール確認が必要な場合は、確認後に自動でログインされます。"
+  );
   }
 
   // console.log(currentUser)
@@ -46,7 +50,12 @@ function Signup(){
       <div className="flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-gray-900">SNS-APP</h2>
         <div className="mt-8 w-full max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+
+
+        <form 
+          className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"
+          onSubmit={ onSubmitSignup }
+        >
           <div className="space-y-6">
 
             <div>
@@ -107,9 +116,9 @@ function Signup(){
             </div>
 
             <div>
-              <button 
+              <button
+                type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm tex-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={signup}
                 disabled={ name === "" || email === "" || password === "" }
               >
                 登録
@@ -117,7 +126,7 @@ function Signup(){
             </div>
 
           </div>
-        </div>
+        </form>
       </div>
       </div>
       

@@ -1,6 +1,12 @@
 
-
 // main.js
+
+// TODO
+// ⭐️ メールが送られなくても登録できる仕様にする
+// リファクタリング formにするなど
+// 更新機能
+// 検索機能
+// 
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client';
