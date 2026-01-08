@@ -24,13 +24,21 @@ function Signin(){
     setPassword(event.target.value);
   }
 
+  // ✅ サインインの処理
   const onSubmitSignin = async (e) => {
     e.preventDefault();
 
-    const user = await authRepositories.signin(email, password);
-    // console.log(user); 
-    // { id: 'e15c2c6d-eabf-4b69-a147-0975b5f91374', aud: 'authenticated', role: 'authenticated', email: 'obito0531@gmail.com', email_confirmed_at: '2026-01-02T09:38:39.988757Z', …}
-    setCurrentUser(user);
+    try {
+      const user = await authRepositories.signin(email, password);
+      // console.log(user); 
+      // { id: 'e15c2c6d-eabf-4b69-a147-0975b5f91374', aud: 'authenticated', role: 'authenticated', email: 'obito0531@gmail.com', email_confirmed_at: '2026-01-02T09:38:39.988757Z', …}
+      setCurrentUser(user);
+
+    } catch(e) {
+      console.error(e);
+      alert(e.message || "ログインに失敗しました。");
+    }
+
   }
 
   // console.log(currentUser)

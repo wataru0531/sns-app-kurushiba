@@ -13,8 +13,6 @@ const SessionProvider = (props) => {
 
   // 👉 現在ログイン中のユーザーのセッションデータを取得してセット
   useEffect(() => {
-    // setSession();
-
     // ✅ 再ログインの場合、またはメール確認OFFの時の処理
     supabase.auth.getSession().then(({ data }) => {
       // console.log(data);
@@ -23,11 +21,12 @@ const SessionProvider = (props) => {
       if(data.session?.user) {
         setCurrentUser(authRepositories.normalizeUser(data.session.user))
       }
+      
       setIsLoading(false);
     });
 
     // ⭐️ 認証状態の変化を監視 → メール確認ONの時の処理
-    // → 
+    // → ユーザーが変更するたびに発火する。常に生きるリスナーとなる
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if(session?.user) {
         setCurrentUser(authRepositories.normalizeUser(session.user));
@@ -37,7 +36,9 @@ const SessionProvider = (props) => {
     });
 
     return () => {
-      listener.subscription.unsubscribe();
+      listener.subscription.unsubscribe(); 
+      // → コンポーネントがアンマウントすると同時に、監視を解除
+      //   → ここではトップのコンポーネントなので、ブラウザを閉じた時、つまりアプリ終了の後始末のために記述
     }
   }, []);
 

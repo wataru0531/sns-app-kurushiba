@@ -11,7 +11,8 @@ import { SideMenu } from "../components/SideMenu";
 import { Post } from "../components/Post";
 import { Pagination } from "../components/Pagination";
 
-const limit = 5; // ページ取得の上限
+const POSTS_PER_RANGE = 5; // ページ取得の上限
+
 
 function Home(){
   const { currentUser, setCurrentUser } = useContext(SessionContext);
@@ -24,31 +25,40 @@ function Home(){
     setContent(e.target.value);
   }
 
+  // ✅ 投稿を作成
   const onSubmitCreatePost = async (e) => {
     e.preventDefault();
 
-    const post = await postRepository.create(content, currentUser.id);
-    // console.log(post);
-    // { id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
-
-    // ⭐️ リアルアイムに更新
-    setPosts([
-      { ...post, 
-        userId: currentUser.id, // 👉 このpostはuserId、userNameを持っていないのでオブジェクトに追加
-        userName: currentUser.name,
-      },
-      ...posts, // 👉 これまで表示していたpostsを追加してリストに表示させる
-    ])
+    try {
+      const post = await postRepository.create(content, currentUser.id);
+      // console.log(post);
+      // { id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
     
-    setContent("");
+      const postForView = { 
+        ...post, 
+        userId: currentUser.id, 
+        userName: currentUser.name 
+      }
+
+      setPosts(prev => [ postForView, ...prev ]); // リストを更新
+
+      setContent("");
+
+    } catch(e) {
+      console.error(e.message);
+    }
   }
 
   // ✅ 投稿を取得する処理
   const fetchPosts = async (_page) => {
-    const posts = await postRepository.find(_page, limit);
-    // console.log(posts);
-    // (3) [{ id: 3, content: 'こんばんは', created_at: '2026-01-05T13:28:47.684718+00:00', user_metadata: {…}, user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9', …}, {…}, {…}]
-    setPosts(posts);
+    try{
+      const posts = await postRepository.find(_page, POSTS_PER_RANGE);
+      setPosts(posts);
+
+    } catch(e) {
+      console.error(e);
+      alert(e.message || "投稿の取得に失敗しました。");
+    }
   }
 
   // ✅ 次のページに進む
@@ -62,31 +72,47 @@ function Home(){
   // ✅ 前のページに戻る
   const moveToPrev = async () => {
     const prevPage = page - 1;
-    await fetchPosts(prevPage);
+    if(prevPage < 1) return;
 
+    await fetchPosts(prevPage);
     setPage(prevPage);
   }
 
   // ✅ 削除
   const onClickDeletePost = async (postId) => {
+    try {
+      await postRepository.delete(postId);
+
+      // ステートの中身を更新
+      // 👉 削除したポスト以外を取得 
+      setPosts(prev => {
+        // console.log(prev)
+        return prev.filter(post => post.id !== postId);
+      });
+
+    } catch(e) {
+      console.error(e);
+      alert(e.message || "削除に失敗しました。");
+    }
+
     await postRepository.delete(postId);
 
-    // ステートの中身を更新
-    // 👉 削除したポスト以外を取得 
-    const updatedPosts = posts.filter(post => post.id !== postId);
-    // setPosts(posts.filter(post => post.id !== postId));
-    setPosts(updatedPosts)
   }
 
   // ✅ ログアウト
   const onClickSignOut = async () => {
-    await authRepositories.signout();
+    try {
+      await authRepositories.signout();
     
-    setCurrentUser(null); // 現在ログインしているユーザーをnullに
+      setCurrentUser(null); // 現在ログインしているユーザーをnullに
+    } catch(e) {
+      console.error(e);
+      alert("ログアウトに失敗しました。")
+    }
   }
 
   useEffect(() => {
-    fetchPosts(1);
+    fetchPosts(page);
   }, [])
 
   // ログイン/登録していないなら、ログインページにリダイレクト
@@ -147,12 +173,13 @@ function Home(){
             {/* ページネーション */}
             <Pagination 
               moveToPrev={ page > 1 ? moveToPrev : null }
-              moveToNext={ posts.length >= limit ? moveToNext : null }
+              moveToNext={ posts.length >= POSTS_PER_RANGE ? moveToNext : null }
             />
           </div>
 
           {/* サイドメニュー */}
           <SideMenu />
+
         </div>
       </div>
     </div>
