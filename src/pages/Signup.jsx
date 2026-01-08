@@ -35,10 +35,7 @@ function Signup(){
     try {
       await authRepositories.signup(name, email, password);
 
-      alert(
-        "登録が完了しました。\n" +
-        "メール確認が必要な場合は、確認後に自動でログインされます。"
-      );
+      alert("登録が完了しました。");
 
     } catch(e) { // 👉 apiで投げられたエラーが渡ってくる
       console.error(e);

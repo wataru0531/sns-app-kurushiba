@@ -38,12 +38,12 @@ export const authRepositories = {
       options: { // ⭐️ ユーザー作成以外にSupabaseに設定したい項目を記述
         data: { _name },
         // emailRedirectTo: "https://wataru-code.com/watarudesign/", // ユーザー登録後に遷移する画面
-        emailRedirectTo: "http://localhost:3000", // ユーザー登録後に遷移する画面
+        // emailRedirectTo: "http://localhost:3000", // ユーザー登録後に遷移する画面
                                                   // → メール確認の完了後
       }
     });
 
-    console.log(error);
+    // console.log(error);
     authRepositories.handleAuthError(error, "Failed to sign up");
 
     return; // 終わらすだけ

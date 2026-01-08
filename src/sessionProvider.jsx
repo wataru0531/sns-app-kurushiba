@@ -1,4 +1,6 @@
 
+// ✅ SessionProvider
+
 
 import { createContext, useEffect, useState } from "react";
 import { authRepositories } from "./repositories/auth";
@@ -6,7 +8,7 @@ import { supabase } from "./lib/supabase";
 
 const SessionContext = createContext();
 
-// ✅ 
+
 const SessionProvider = (props) => {
   const [ currentUser, setCurrentUser ] = useState(null);
   const [ isLoading, setIsLoading ] = useState(true);
@@ -20,8 +22,10 @@ const SessionProvider = (props) => {
 
       if(data.session?.user) {
         setCurrentUser(authRepositories.normalizeUser(data.session.user))
+      } else {
+        setCurrentUser(null);
       }
-      
+
       setIsLoading(false);
     });
 
