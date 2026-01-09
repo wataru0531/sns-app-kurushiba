@@ -21,6 +21,7 @@ function Home(){
   const [ posts, setPosts ] = useState([]);
   const [ page, setPage ] = useState(1);
   const [ editingPostId, setEditingPostId ] = useState(null);
+  const [ editingContent, setEditingContent ] = useState("");
 
   const onChangeSetContent = (e) => {
     setContent(e.target.value);
@@ -95,27 +96,50 @@ function Home(){
       console.error(e);
       alert(e.message || "削除に失敗しました。");
     }
-
-    await postRepository.delete(postId);
   }
+
+  // ✅　編集開始 / キャンセル
+  const onClickEdit = ({ id, content }) => {
+    if(!id && !content) {
+      setEditingPostId(null);
+      setEditingContent("");
+
+      return;
+    }
+
+    setEditingPostId(id);
+    setEditingContent(content);
+  }
+  // const onClickEdit = (_post) => {
+  //   if(!_post) {
+  //     setEditingPostId(null);
+  //     setEditingContent("");
+
+  //     return;
+  //   }
+
+  //   setEditingPostId(_post.id);
+  //   setEditingContent(_post.content);
+  // }
 
   // ✅ 更新
   // 更新したい投稿のId、新しいcontent
-  const onSubmitUpdatePost = async (_postId, _newContent) => {
+  const onSubmitUpdatePost = async (_postId) => {
     try {
-      const updated = await postRepository.update(_postId, _newContent);
+      const updated = await postRepository.update(_postId, editingContent);
+      // console.log(updated);
 
       // 指定した_postIdと合致するpostのみcontentを更新
-      setPosts(prev => {
-        prev.map(post => {
-          return post.id === _postId 
-                        ? { ...post, content: updated.post }
-                        : post
-        })
-      });
+      setPosts(prev =>
+        prev.map(post =>
+          post.id === _postId
+            ? { ...post, content: updated.content }
+            : post
+        )
+      );
 
       setEditingPostId(null); // 編集したいidのステートをnullに
-
+      setEditingContent("");
     } catch(e) {
       console.error(e);
       alert(e.message || "更新に失敗しました。");
@@ -186,8 +210,14 @@ function Home(){
                     <Post 
                       key={ post.id } 
                       post={ post }
-                      onClickDeletePost={ onClickDeletePost }
+                      isEditing={ editingPostId === post.id }
+                      editingContent={ editingContent }
+                      setEditingContent={ setEditingContent }
+                      onClickEdit={ onClickEdit }
+
                       onSubmitUpdatePost={ onSubmitUpdatePost }
+                      onClickDeletePost={ onClickDeletePost }
+                      
                       editingPostId={ editingPostId }
                       setEditingPostId={ setEditingPostId }
                     />

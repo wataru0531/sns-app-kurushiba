@@ -85,12 +85,15 @@ export const postRepository = {
 
   // ✅ 更新
   async update(_postId, _content) {
+    // console.log(_postId, _content)
     const { data, error } = await supabase
       .from("posts")
       .update({ content: _content })
       .eq("id", _postId) // T0DO
       .select() // TODO
-      .single(); // TODO
+      // .single(); // TODO
+
+      console.log(data); // 配列を返す
 
     handleDbError(error, "Failed to update post");
     return data;
