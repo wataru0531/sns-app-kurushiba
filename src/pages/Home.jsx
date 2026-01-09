@@ -20,6 +20,7 @@ function Home(){
   const [ content, setContent ] = useState("");
   const [ posts, setPosts ] = useState([]);
   const [ page, setPage ] = useState(1);
+  const [ editingPostId, setEditingPostId ] = useState(null);
 
   const onChangeSetContent = (e) => {
     setContent(e.target.value);
@@ -96,7 +97,29 @@ function Home(){
     }
 
     await postRepository.delete(postId);
+  }
 
+  // ✅ 更新
+  // 更新したい投稿のId、新しいcontent
+  const onSubmitUpdatePost = async (_postId, _newContent) => {
+    try {
+      const updated = await postRepository.update(_postId, _newContent);
+
+      // 指定した_postIdと合致するpostのみcontentを更新
+      setPosts(prev => {
+        prev.map(post => {
+          return post.id === _postId 
+                        ? { ...post, content: updated.post }
+                        : post
+        })
+      });
+
+      setEditingPostId(null); // 編集したいidのステートをnullに
+
+    } catch(e) {
+      console.error(e);
+      alert(e.message || "更新に失敗しました。");
+    }
   }
 
   // ✅ ログアウト
@@ -164,6 +187,9 @@ function Home(){
                       key={ post.id } 
                       post={ post }
                       onClickDeletePost={ onClickDeletePost }
+                      onSubmitUpdatePost={ onSubmitUpdatePost }
+                      editingPostId={ editingPostId }
+                      setEditingPostId={ setEditingPostId }
                     />
                   )
                 }) 

@@ -71,6 +71,7 @@ export const postRepository = {
     })
   },
 
+  // ✅ 削除
   async delete(_id) { // 削除するpostのid
     const { error } = await supabase
       .from("posts")
@@ -80,6 +81,19 @@ export const postRepository = {
     handleDbError(error, "Failed to delete post");
     
     return true;
+  },
+
+  // ✅ 更新
+  async update(_postId, _content) {
+    const { data, error } = await supabase
+      .from("posts")
+      .update({ content: _content })
+      .eq("id", _postId) // T0DO
+      .select() // TODO
+      .single(); // TODO
+
+    handleDbError(error, "Failed to update post");
+    return data;
   }
 
 }
