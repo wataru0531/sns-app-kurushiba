@@ -18,8 +18,10 @@ function Home(){
   const { currentUser, setCurrentUser } = useContext(SessionContext);
   // console.log(currentUser);
   const [ content, setContent ] = useState("");
+  
   const [ posts, setPosts ] = useState([]);
   const [ page, setPage ] = useState(1);
+
   const [ editingPostId, setEditingPostId ] = useState(null);
   const [ editingContent, setEditingContent ] = useState("");
 
@@ -34,15 +36,17 @@ function Home(){
     try {
       const post = await postRepository.create(content, currentUser.id);
       // console.log(post);
-      // { id: 1, created_at: '2026-01-03T14:09:55.525926+00:00', content: 'hellor', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}
     
-      const postForView = { 
+      const newPost = { 
         ...post, 
         userId: currentUser.id, 
-        userName: currentUser.name 
+        userName: currentUser.userName
       }
+      // console.log(newPost); // {id: 32, content: 'こんばんは', createdAt: '2026-01-10T08:02:47.454807+00:00', userId: '7a430f0a-ff0a-499b-b14e-ab064e3e551b', userName: 'wataru'}
 
-      setPosts(prev => [ postForView, ...prev ]); // リストを更新
+      setPosts(prev => {
+        return [ newPost, ...prev ]
+      }); // リストを更新
 
       setContent("");
 
@@ -98,53 +102,46 @@ function Home(){
     }
   }
 
-  // ✅　編集開始 / キャンセル
-  const onClickEdit = ({ id, content }) => {
-    if(!id && !content) {
+  // ✅ 編集開始 / キャンセル
+  // → 編集したいpostの id と content を取得してstateに取得
+  const onClickEdit = (_post) => {
+    if(!_post) {
       setEditingPostId(null);
       setEditingContent("");
-
       return;
     }
 
-    setEditingPostId(id);
-    setEditingContent(content);
+    setEditingPostId(_post.id);
+    setEditingContent(_post.content);
   }
-  // const onClickEdit = (_post) => {
-  //   if(!_post) {
-  //     setEditingPostId(null);
-  //     setEditingContent("");
-
-  //     return;
-  //   }
-
-  //   setEditingPostId(_post.id);
-  //   setEditingContent(_post.content);
-  // }
 
   // ✅ 更新
   // 更新したい投稿のId、新しいcontent
   const onSubmitUpdatePost = async (_postId) => {
     try {
-      const updated = await postRepository.update(_postId, editingContent);
-      // console.log(updated);
+      const updated = await postRepository.update(
+        _postId,
+        editingContent
+      );
+      ;
 
-      // 指定した_postIdと合致するpostのみcontentを更新
       setPosts(prev =>
         prev.map(post =>
           post.id === _postId
-            ? { ...post, content: updated.content }
+            ? { ...post, content: updated[0].content }
             : post
         )
       );
+      // console.log(posts)
 
-      setEditingPostId(null); // 編集したいidのステートをnullに
+      setEditingPostId(null);
       setEditingContent("");
-    } catch(e) {
+      
+    } catch (e) {
       console.error(e);
       alert(e.message || "更新に失敗しました。");
     }
-  }
+  };
 
   // ✅ ログアウト
   const onClickSignOut = async () => {
@@ -210,16 +207,13 @@ function Home(){
                     <Post 
                       key={ post.id } 
                       post={ post }
+                      onClickEdit={ onClickEdit }
                       isEditing={ editingPostId === post.id }
                       editingContent={ editingContent }
                       setEditingContent={ setEditingContent }
-                      onClickEdit={ onClickEdit }
-
+                      
                       onSubmitUpdatePost={ onSubmitUpdatePost }
                       onClickDeletePost={ onClickDeletePost }
-                      
-                      editingPostId={ editingPostId }
-                      setEditingPostId={ setEditingPostId }
                     />
                   )
                 }) 

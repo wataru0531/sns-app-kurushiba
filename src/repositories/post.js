@@ -93,7 +93,7 @@ export const postRepository = {
       .select() // TODO
       // .single(); // TODO
 
-      console.log(data); // 配列を返す
+      // console.log(data); // 配列を返す
 
     handleDbError(error, "Failed to update post");
     return data;
