@@ -35,20 +35,18 @@ function Home(){
 
     try {
       const post = await postRepository.create(content, currentUser.id);
-      // console.log(post);
-    
+      // console.log(post); // {id: 46, content: 'おはようございます。', createdAt: '2026-01-12T08:50:29.890958+00:00', userId: '7a430f0a-ff0a-499b-b14e-ab064e3e551b', userName: 'Unknown'}
+                          // → userNameはついていない。
       const newPost = { 
         ...post, 
-        userId: currentUser.id, 
+        // userId: currentUser.id, 
         userName: currentUser.userName
       }
-      // console.log(newPost); // {id: 32, content: 'こんばんは', createdAt: '2026-01-10T08:02:47.454807+00:00', userId: '7a430f0a-ff0a-499b-b14e-ab064e3e551b', userName: 'wataru'}
+      console.log(newPost); // {id: 32, content: 'こんばんは', createdAt: '2026-01-10T08:02:47.454807+00:00', userId: '7a430f0a-ff0a-499b-b14e-ab064e3e551b', userName: 'wataru'}
 
       setPosts(prev => {
         return [ newPost, ...prev ]
       }); // リストを更新
-
-      setContent("");
 
     } catch(e) {
       console.error(e.message);
@@ -56,10 +54,12 @@ function Home(){
   }
 
   // ✅ 投稿を取得する処理
-  const fetchPosts = async (_page) => {
+  const fetchPosts = async (_page = 1) => {
     try{
       const posts = await postRepository.find(_page, POSTS_PER_RANGE);
+      // console.log(posts)
       setPosts(posts);
+      setPage(_page);
 
     } catch(e) {
       console.error(e);
@@ -69,19 +69,14 @@ function Home(){
 
   // ✅ 次のページに進む
   const moveToNext = async () => {
-    const nextPage = page + 1;
-    await fetchPosts(nextPage);
-
-    setPage(nextPage);
+    await fetchPosts(page + 1);
   }
 
   // ✅ 前のページに戻る
   const moveToPrev = async () => {
-    const prevPage = page - 1;
-    if(prevPage < 1) return;
+    if(page < 1) return;
 
-    await fetchPosts(prevPage);
-    setPage(prevPage);
+    await fetchPosts(page - 1);
   }
 
   // ✅ 削除
@@ -123,7 +118,6 @@ function Home(){
         _postId,
         editingContent
       );
-      ;
 
       setPosts(prev =>
         prev.map(post =>

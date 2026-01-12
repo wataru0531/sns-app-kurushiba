@@ -23,8 +23,8 @@ export const Post = ({
 
   // ✅ 編集 → 保存 の時に内容が同じなら保存ボタンをおせないようにする
   // → 空でない、同じ内容ではない
-  const isChanged = editingContent.trim() !== "" &&
-                    editingContent !== post.content;
+  const isChanged = editingContent.trim() !== "" &&  // 空ではない
+                    editingContent !== post.content; // 既存のcontentと違う場合
 
   return (
     <div className="mt-4 bg-white p-4 rounded-lg shadow-md">

@@ -35,10 +35,10 @@ export const postRepository = {
         user_id: _userId, 
       }])
       .select();
+    // console.log(data);
+    // [{id: 2, created_at: '2026-01-05T07:39:20.838663+00:00', content: 'こんにちは', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}]
+    // → userNameはついていない
 
-      // console.log(data);
-      // [{id: 2, created_at: '2026-01-05T07:39:20.838663+00:00', content: 'こんにちは', user_id: '05a6c3f3-fa3d-49f2-9738-cccbbb221ad9'}]
-    
     handleDbError(error, "Failed to createPost");
     // console.log(data);
     // return data[0];
@@ -51,7 +51,7 @@ export const postRepository = {
     // console.log(isNaN(_page)); // false
     _page = isNaN(_page) || _page < 1 ? 1 : _page;
     const start = _limit * (_page - 1);
-    const end = start + _limit -1;
+    const end = start + _limit - 1;
     // console.log(start, end); // 0, 4
                              // 5, 9 
 

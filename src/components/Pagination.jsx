@@ -2,6 +2,8 @@
 // Pagination
 
 export function Pagination({ moveToNext, moveToPrev }) {
+  // console.log(moveToNext);
+
   return (
     <div className="flex justify-center mt-[16px]">
       <button 
